@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MapLead SaaS CRM | Google Maps Lead Organiser & Outreach</title>
+  <meta name="description" content="Manage and personalize outreach to tuition centers, coaching classes, and local businesses discovered on Google Maps.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+  <div class="app-container">
+    
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-wrapper">
+          <div class="logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              <circle cx="12" cy="9" r="2.5"/>
+            </svg>
+          </div>
+          <div class="logo-text">
+            <div class="logo-title">MapLead <span class="badge-saas">SaaS Studio</span></div>
+            <div class="logo-subtitle">Google Maps Outreach & Pipeline CRM</div>
+          </div>
+        </div>
+
+        <nav class="nav-tabs">
+          <button class="nav-tab active" data-view="table">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+            Leads Table
+          </button>
+          <button class="nav-tab" data-view="kanban">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="5" height="15" rx="1"/></svg>
+            Pipeline Board
+          </button>
+          <button class="nav-tab" data-view="templates">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Pitch Templates
+          </button>
+          <button class="nav-tab" data-view="analytics">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            Funnel Stats
+          </button>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <!-- Local SQLite Database Indicator -->
+        <div id="dbStatusBadge" class="badge-db" title="All data is permanently stored in local SQLite database (leads.db)">
+          <span class="db-dot"></span>
+          <span>SQLite Database</span>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <button id="btnSmartPaste" class="btn btn-secondary" title="Smart extract lead details directly from any copied website or Google Maps text">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Smart Website & Maps Parser
+        </button>
+
+        <button id="btnAddNewLead" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add New Lead
+        </button>
+
+        <div class="dropdown-container">
+          <button id="btnMoreActions" class="btn btn-icon" title="Import / Export & Reset">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </button>
+          <div class="dropdown-menu" id="moreActionsMenu">
+            <button class="dropdown-item" id="btnExportCsv">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export Leads to CSV
+            </button>
+            <label class="dropdown-item file-upload-label" for="importCsvInput">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Import Leads from CSV
+              <input type="file" id="importCsvInput" accept=".csv" style="display: none;">
+            </label>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item danger" id="btnClearAllLeads">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Clear All Leads
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Top KPI Performance Strip -->
+    <section class="kpi-banner">
+      <div class="kpi-card">
+        <div class="kpi-icon total">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="kpi-content">
+          <span class="kpi-label">Total Leads</span>
+          <span class="kpi-value" id="kpiTotalLeads">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon contacted">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="kpi-content">
+          <span class="kpi-label">Pitched / Contacted</span>
+          <span class="kpi-value" id="kpiContacted">0</span>
+          <span class="kpi-sub" id="kpiContactedPercent">0% of total</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon demo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="kpi-content">
+          <span class="kpi-label">Demos Scheduled</span>
+          <span class="kpi-value" id="kpiDemos">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon won">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+        </div>
+        <div class="kpi-content">
+          <span class="kpi-label">Deals Won (Clients)</span>
+          <span class="kpi-value" id="kpiWon">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card highlight">
+        <div class="kpi-icon follow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="kpi-content">
+          <span class="kpi-label">Follow-ups Due Today</span>
+          <span class="kpi-value" id="kpiFollowUps">0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Body -->
+    <main class="app-main">
+      
+      <!-- Filter & Search Toolbar (Common across views) -->
+      <div class="toolbar-container">
+        <div class="toolbar-search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Search by business name, owner/doctor, city, phone or category..." autocomplete="off">
+          <button id="btnClearSearch" class="btn-clear" style="display: none;">&times;</button>
+        </div>
+
+        <div class="toolbar-filters">
+          <div class="filter-group">
+            <label for="categoryFilter">Industry / Category:</label>
+            <select id="categoryFilter">
+              <option value="all">All Industries</option>
+              <option value="Digital Marketing Agency">Digital Marketing Agencies</option>
+              <option value="Dental & Healthcare Clinic">Dental & Healthcare Clinics</option>
+              <option value="Real Estate & Property">Real Estate & Property</option>
+              <option value="Restaurant & Hospitality">Restaurants & Cafes</option>
+              <option value="Gym & Fitness Studio">Gyms & Fitness Studios</option>
+              <option value="Salon & Beauty Spa">Salons & Beauty Spas</option>
+              <option value="Coaching & Education">Coaching & Academies</option>
+              <option value="Wholesale & Distribution">Wholesalers & Distributors</option>
+              <option value="CA & Legal Services">CA & Legal Consultancies</option>
+              <option value="Automobile & Detailing">Automobile & Detailing</option>
+              <option value="Recruitment & Staffing">Recruitment & Staffing</option>
+              <option value="Manufacturing & Industrial">Manufacturing & Industrial</option>
+              <option value="E-commerce & Retail">E-commerce & Retail</option>
+              <option value="Interior Design & Architecture">Interior Design Studios</option>
+              <option value="Other">Other / General Business</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="stageFilter">Pipeline Stage:</label>
+            <select id="stageFilter">
+              <option value="all">All Stages</option>
+              <option value="new">🆕 New Lead</option>
+              <option value="contacted">💬 Outreach Sent</option>
+              <option value="follow_up">⏰ Follow-up Needed</option>
+              <option value="demo_booked">🖥️ Demo Booked</option>
+              <option value="closed_won">🎉 Deal Won</option>
+              <option value="not_interested">🚫 Not Interested</option>
+            </select>
+          </div>
+
+          <button id="btnQuickPitchedFilter" class="chip-filter" data-active="false">
+            <span class="dot-indicator"></span> Only Needs Follow-up
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 1: Leads Table View -->
+      <section id="viewTable" class="view-panel active">
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="leads-table" id="leadsTable">
+              <thead>
+                <tr>
+                  <th width="24%">Business & Industry Details</th>
+                  <th width="15%">Owner / Contact Person</th>
+                  <th width="16%">Phone & Email</th>
+                  <th width="14%">Location / City</th>
+                  <th width="13%">Pipeline Stage</th>
+                  <th width="18%" class="text-right">Outreach Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTableBody">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+          
+          <div id="tableEmptyState" class="empty-state" style="display: none;">
+            <div class="empty-icon">🔍</div>
+            <h3>No leads found matching your criteria</h3>
+            <p>Try clearing your search or add new businesses discovered on Google Maps.</p>
+            <button class="btn btn-primary" onclick="window.openAddLeadModal()">Add First Lead</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: Kanban Pipeline Board -->
+      <section id="viewKanban" class="view-panel">
+        <div class="kanban-board" id="kanbanBoard">
+          <!-- Columns dynamically populated or structured -->
+          <div class="kanban-column" data-stage="new">
+            <div class="column-header">
+              <div class="stage-badge-indicator stage-new"></div>
+              <h4>New Leads</h4>
+              <span class="column-count" id="count-new">0</span>
+            </div>
+            <div class="kanban-dropzone" data-stage="new"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="contacted">
+            <div class="column-header">
+              <div class="stage-badge-indicator stage-contacted"></div>
+              <h4>Outreach Sent</h4>
+              <span class="column-count" id="count-contacted">0</span>
+            </div>
+            <div class="kanban-dropzone" data-stage="contacted"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="follow_up">
+            <div class="column-header">
+              <div class="stage-badge-indicator stage-follow_up"></div>
+              <h4>Follow-up Needed</h4>
+              <span class="column-count" id="count-follow_up">0</span>
+            </div>
+            <div class="kanban-dropzone" data-stage="follow_up"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="demo_booked">
+            <div class="column-header">
+              <div class="stage-badge-indicator stage-demo_booked"></div>
+              <h4>Demo Scheduled</h4>
+              <span class="column-count" id="count-demo_booked">0</span>
+            </div>
+            <div class="kanban-dropzone" data-stage="demo_booked"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="closed_won">
+            <div class="column-header">
+              <div class="stage-badge-indicator stage-closed_won"></div>
+              <h4>Deal Closed Won</h4>
+              <span class="column-count" id="count-closed_won">0</span>
+            </div>
+            <div class="kanban-dropzone" data-stage="closed_won"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="not_interested">
+            <div class="column-header">
+              <div class="stage-badge-indicator stage-not_interested"></div>
+              <h4>Not Interested</h4>
+              <span class="column-count" id="count-not_interested">0</span>
+            </div>
+            <div class="kanban-dropzone" data-stage="not_interested"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: Pitch & Outreach Templates View -->
+      <section id="viewTemplates" class="view-panel">
+        <div class="templates-layout">
+          <div class="templates-sidebar">
+            <div class="section-title-row">
+              <h3>Message Templates</h3>
+              <button id="btnNewTemplate" class="btn btn-secondary btn-sm">+ New Template</button>
+            </div>
+            <p class="section-desc">Personalized SaaS pitches with dynamic variables like <code>{contactPerson}</code> and <code>{businessName}</code>.</p>
+            <div class="template-list" id="templateList">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <div class="templates-editor-pane">
+            <div class="editor-header">
+              <h3 id="currentTemplateTitle">Edit Template</h3>
+              <div class="editor-actions">
+                <button id="btnDeleteTemplate" class="btn btn-danger btn-sm">Delete</button>
+                <button id="btnSaveTemplate" class="btn btn-primary btn-sm">Save Changes</button>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label>Template Name</label>
+                <input type="text" id="tplNameInput" placeholder="e.g. Tuition Fee Reminder Pitch">
+              </div>
+
+              <div class="form-group half-width">
+                <label>Target Channel</label>
+                <select id="tplChannelInput">
+                  <option value="whatsapp">WhatsApp (Direct Link)</option>
+                  <option value="email">Email</option>
+                  <option value="sms">SMS / Direct Message</option>
+                </select>
+              </div>
+
+              <div class="form-group half-width" id="tplSubjectGroup">
+                <label>Email Subject (For Email Channel)</label>
+                <input type="text" id="tplSubjectInput" placeholder="Quick question for {businessName}...">
+              </div>
+
+              <div class="form-group full-width">
+                <div class="label-with-tags">
+                  <label>Message Content</label>
+                  <div class="token-tags">
+                    <span class="token-tag" data-token="{contactPerson}">+ {contactPerson}</span>
+                    <span class="token-tag" data-token="{businessName}">+ {businessName}</span>
+                    <span class="token-tag" data-token="{city}">+ {city}</span>
+                    <span class="token-tag" data-token="{rating}">+ {rating}</span>
+                    <span class="token-tag" data-token="{offeredProduct}">+ {offeredProduct}</span>
+                    <span class="token-tag" data-token="{senderName}">+ {senderName}</span>
+                  </div>
+                </div>
+                <textarea id="tplBodyInput" rows="10" placeholder="Type your personalized pitch here..."></textarea>
+              </div>
+            </div>
+
+            <!-- Live Preview Box -->
+            <div class="live-preview-box">
+              <div class="preview-header">
+                <span>Live Personalization Preview (Using Sample Tuition)</span>
+                <span class="badge-channel" id="previewChannelBadge">WhatsApp</span>
+              </div>
+              <div class="preview-bubble" id="templateLivePreview">
+                <!-- Live preview text -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: Funnel & SaaS Analytics -->
+      <section id="viewAnalytics" class="view-panel">
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <div class="card-header">
+              <h3>Conversion Funnel</h3>
+              <span class="card-subtitle">From Google Maps search to Closed SaaS clients</span>
+            </div>
+            <div class="funnel-container" id="funnelVisual">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <div class="card-header">
+              <h3>Leads by Category / Domain</h3>
+              <span class="card-subtitle">Distribution across Tuition, Coaching, & Skills</span>
+            </div>
+            <div class="category-breakdown-list" id="categoryStats">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <div class="analytics-card full-span">
+            <div class="card-header">
+              <h3>⏰ Follow-up Schedule & Daily Action Plan</h3>
+              <span class="card-subtitle">Never miss following up with tuition owners who showed interest</span>
+            </div>
+            <div class="followups-agenda" id="followupsAgenda">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Slide-over / Modal: Add / Edit Lead -->
+    <div class="modal-overlay" id="leadModalOverlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2 id="modalLeadTitle">Add New Lead from Google Maps</h2>
+          <button class="btn-modal-close" id="btnCloseLeadModal">&times;</button>
+        </div>
+        <form id="leadForm" class="modal-form">
+          <input type="hidden" id="formLeadId">
+          
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="formBusinessName">Business Name *</label>
+              <input type="text" id="formBusinessName" required placeholder="e.g. Apex Dental Care / Nova Agency / Zenith Realty">
+            </div>
+            <div class="form-group flex-1">
+              <label for="formCategory">Industry Category *</label>
+              <select id="formCategory" required>
+                <option value="Digital Marketing Agency">Digital Marketing Agencies</option>
+                <option value="Dental & Healthcare Clinic">Dental & Healthcare Clinics</option>
+                <option value="Real Estate & Property">Real Estate & Property</option>
+                <option value="Restaurant & Hospitality">Restaurants & Cafes</option>
+                <option value="Gym & Fitness Studio">Gyms & Fitness Studios</option>
+                <option value="Salon & Beauty Spa">Salons & Beauty Spas</option>
+                <option value="Coaching & Education">Coaching & Academies</option>
+                <option value="Wholesale & Distribution">Wholesalers & Distributors</option>
+                <option value="CA & Legal Services">CA & Legal Consultancies</option>
+                <option value="Automobile & Detailing">Automobile & Detailing</option>
+                <option value="Recruitment & Staffing">Recruitment & Staffing</option>
+                <option value="Manufacturing & Industrial">Manufacturing & Industrial</option>
+                <option value="E-commerce & Retail">E-commerce & Retail</option>
+                <option value="Interior Design & Architecture">Interior Design Studios</option>
+                <option value="Other">Other / General Business</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="formContactPerson">Contact Person / Decision Maker</label>
+              <input type="text" id="formContactPerson" placeholder="e.g. Dr. Rajesh / Chef Amit / Aryan Verma">
+            </div>
+            <div class="form-group flex-1">
+              <label for="formPhone">Phone / WhatsApp Number *</label>
+              <input type="tel" id="formPhone" required placeholder="e.g. +91 98201 44521">
+            </div>
+            <div class="form-group flex-1">
+              <label for="formEmail">Email Address</label>
+              <input type="email" id="formEmail" placeholder="e.g. contact@apexclasses.com">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="formCity">City / Locality *</label>
+              <input type="text" id="formCity" required placeholder="e.g. Mumbai, Andheri West">
+            </div>
+            <div class="form-group flex-2">
+              <label for="formAddress">Full Address</label>
+              <input type="text" id="formAddress" placeholder="e.g. 3rd Floor, Sterling Plaza, Near Station">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="formMapsUrl">Google Maps URL / Link</label>
+              <input type="url" id="formMapsUrl" placeholder="https://maps.google.com/...">
+            </div>
+            <div class="form-group flex-1">
+              <label for="formRating">Rating (★)</label>
+              <input type="number" id="formRating" step="0.1" min="1" max="5" value="4.8">
+            </div>
+            <div class="form-group flex-1">
+              <label for="formReviews">Reviews Count</label>
+              <input type="number" id="formReviews" min="0" value="50">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="formStage">Pipeline Stage</label>
+              <select id="formStage">
+                <option value="new">🆕 New Lead</option>
+                <option value="contacted">💬 Outreach Sent</option>
+                <option value="follow_up">⏰ Follow-up Needed</option>
+                <option value="demo_booked">🖥️ Demo Scheduled</option>
+                <option value="closed_won">🎉 Deal Won</option>
+                <option value="not_interested">🚫 Not Interested</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="formOfferedProduct">SaaS Solution Pitching</label>
+              <input type="text" id="formOfferedProduct" placeholder="e.g. Attendance & Fee Reminder SaaS">
+            </div>
+            <div class="form-group flex-1">
+              <label for="formNextFollowUp">Next Follow-up Date</label>
+              <input type="date" id="formNextFollowUp">
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="formNotes">Notes / Conversation Highlights</label>
+            <textarea id="formNotes" rows="3" placeholder="Key pain points, batches run, preferred timings, pricing discussed..."></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnCancelLeadModal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitLeadForm">Save Lead</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Smart Website & Maps Text Organiser -->
+    <div class="modal-overlay" id="smartPasteModalOverlay">
+      <div class="modal-container modal-large">
+        <div class="modal-header">
+          <div class="title-with-badge">
+            <h2>Smart Website & Maps Text Organiser</h2>
+            <span class="badge-ai">Instant Auto-Organize</span>
+          </div>
+          <button class="btn-modal-close" id="btnCloseSmartPaste">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-desc">
+            Go to any tuition or business website, press <kbd>Ctrl+A</kbd> then <kbd>Ctrl+C</kbd> (or copy from their Contact / About page or Google Maps card), and paste it below. All details will be automatically organized into clean, structured fields!
+          </p>
+
+          <div class="paste-toolbar" style="flex-wrap: wrap; gap: 8px;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnPasteClipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+              📋 Paste
+            </button>
+            <span style="font-size: 0.75rem; color: var(--text-muted); align-self: center; margin-left: 4px;">Try sample business:</span>
+            <button type="button" class="btn btn-secondary btn-sm btn-industry-sample" data-sample="dental">🩺 Dental Clinic</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-industry-sample" data-sample="agency">🚀 Agency</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-industry-sample" data-sample="realestate">🏢 Real Estate</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-industry-sample" data-sample="restaurant">🍽️ Restaurant</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-industry-sample" data-sample="tuition">📚 Coaching</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-industry-sample" data-sample="wholesale">📦 Wholesale</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnClearPaste" style="margin-left: auto;">
+              🧹 Clear
+            </button>
+          </div>
+
+          <div class="form-group full-width">
+            <textarea id="smartPasteInput" rows="6" placeholder="Paste any website text or Google Maps business details here... 
+Works with Dental Clinics, Marketing Agencies, Real Estate, Restaurants, Gyms, Salons, Coaching Centers, Wholesalers & Any Local Business!"></textarea>
+          </div>
+
+          <!-- Organized Details Live Card -->
+          <div class="extracted-preview-panel" id="extractedPreviewPanel" style="display: none;">
+            <div class="extracted-header">
+              <div class="extracted-title-status">
+                <span class="pulse-dot"></span>
+                <h4>Organized Details from Website</h4>
+              </div>
+              <span class="badge-detected-count" id="badgeDetectedCount">7 Details Extracted</span>
+            </div>
+
+            <div class="preview-fields-grid" id="detectedFieldsGrid">
+              <!-- Dynamically rendered organized card with inputs & selectors -->
+            </div>
+
+            <!-- Detected Courses & Offerings tags -->
+            <div class="detected-courses-box" id="detectedCoursesBox" style="display: none;">
+              <span class="detected-box-label">📚 Detected Courses / Offerings:</span>
+              <div class="detected-tags-list" id="detectedCoursesList"></div>
+            </div>
+
+            <!-- Auto-Recommended SaaS Pitch -->
+            <div class="ai-pitch-recommendation" id="aiPitchRecommendation" style="display: none;">
+              <div class="ai-pitch-icon">💡</div>
+              <div class="ai-pitch-content">
+                <strong>Recommended SaaS Pitch for this Academy:</strong>
+                <p id="aiPitchText">Attendance & Parent WhatsApp Fee Reminder SaaS</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btnCancelSmartPaste">Cancel</button>
+          <button type="button" class="btn btn-primary" id="btnImportParsedLead" disabled>
+            💾 Save Lead
+          </button>
+          <button type="button" class="btn btn-whatsapp" id="btnImportAndWhatsApp" disabled>
+            🟢 Save & WhatsApp
+          </button>
+          <button type="button" class="btn btn-gmail" id="btnImportAndEmail" disabled>
+            ✉️ Save & Email (Gmail)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Personalized Outreach & Quick Send (WhatsApp / Email) -->
+    <div class="modal-overlay" id="outreachModalOverlay">
+      <div class="modal-container modal-large">
+        <div class="modal-header">
+          <div class="title-with-badge">
+            <h2>Send Personalized Outreach</h2>
+            <span class="badge-recipient" id="outreachRecipientBadge">Prof. Rajesh Sharma (Excel Academy)</span>
+          </div>
+          <button class="btn-modal-close" id="btnCloseOutreachModal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="outreach-controls-row">
+            <div class="form-group flex-2">
+              <label for="outreachTemplateSelect">Choose SaaS Pitch Template:</label>
+              <select id="outreachTemplateSelect"></select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="outreachSenderName">Your Name / Agency:</label>
+              <input type="text" id="outreachSenderName" value="Jainam Jain">
+            </div>
+          </div>
+
+          <div class="form-group full-width" id="outreachSubjectGroup" style="display: none;">
+            <label for="outreachSubject">Email Subject:</label>
+            <input type="text" id="outreachSubject" class="form-control">
+          </div>
+
+          <div class="form-group full-width">
+            <label for="outreachMessageText">Personalized Message Preview (You can edit before sending):</label>
+            <textarea id="outreachMessageText" rows="10"></textarea>
+          </div>
+
+          <div class="lead-quick-info" id="outreachLeadInfoBar">
+            <!-- phone, email, google maps preview link -->
+          </div>
+        </div>
+
+        <div class="modal-footer outreach-footer">
+          <button type="button" class="btn btn-secondary" id="btnCopyOutreach" title="Copy personalized message to clipboard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+
+          <button type="button" class="btn btn-gmail" id="btnSendGmailWeb" title="Open directly in Gmail Web with pre-filled message ready to hit send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.266H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+            1-Click Gmail
+          </button>
+          
+          <button type="button" class="btn btn-email" id="btnSendEmailDirect" title="Open with your default system email app (Outlook, Apple Mail)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Mail App
+          </button>
+
+          <button type="button" class="btn btn-whatsapp" id="btnSendWhatsAppDirect">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.19-.09-1.12-.55-1.3-.61-.17-.07-.3-.1-.43.1-.12.19-.49.61-.6.74-.11.12-.23.14-.42.05-.19-.09-.81-.3-1.54-.95-.57-.51-.96-1.14-1.07-1.33-.11-.19-.01-.3.08-.39.09-.08.19-.23.29-.35.09-.12.13-.2.19-.33.06-.14.03-.26-.01-.35-.05-.09-.43-1.04-.59-1.42-.16-.38-.32-.33-.43-.33h-.37c-.13 0-.34.05-.52.24-.17.2-.67.66-.67 1.6 0 .95.69 1.86.79 1.99.09.14 1.36 2.08 3.3 2.91.46.2.82.32 1.1.41.46.15.89.13 1.22.08.37-.05 1.12-.46 1.28-.9.16-.44.16-.82.11-.9-.04-.08-.17-.13-.36-.23z"/></svg>
+            Send WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="sampleData.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
